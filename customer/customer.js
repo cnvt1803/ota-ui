@@ -44,7 +44,7 @@ async function populateDeviceTable() {
       statusBadge = '<span class="status-badge status-up-to-date">Done</span>';
     } else if (device.status === "failed") {
       statusBadge = '<span class="status-badge status-outdated">Failed</span>';
-    } else {
+    } else if (device.status === "waiting") {
       statusBadge = '<span class="status-badge status-update-available">Waiting</span>';
     }
 
