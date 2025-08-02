@@ -1,4 +1,4 @@
-import { getDeviceList, getVersionsList, updateDevice, deleteDevice, getInfo, updateDeviceVersion, updateDeviceInfo  } from '../callAPI.js';
+import { getDeviceList, getVersionsList, updateDevice, deleteDevice, getInfo, updateDeviceVersion } from '../callAPI.js';
 
 // Function to populate the device table
 async function populateDeviceTable() {
@@ -23,10 +23,12 @@ async function populateDeviceTable() {
     })();
 
     // Connection status with proper CSS classes
+    const status = (device?.is_connected || 'unknown').toLowerCase();
+
     const connectionStatus = `
-      <span class="connection-status connection-${device.is_connected}">
+      <span class="connection-status connection-${status}">
         <span class="connection-dot"></span>
-        ${device.is_connected}
+        ${status}
       </span>`;
 
 
@@ -897,7 +899,7 @@ async function submitEditDeviceForm(event) {
     const loadingToast = createToast('Updating device...', 'info', 10000);
 
     // Call update API
-    const updateData = await updateDeviceInfo({
+    const updateData = await updateDevice({
       device_id: deviceId,
       name: deviceName,
       location: deviceLocation,
@@ -1518,7 +1520,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await populateDeviceTable();
   
   // Start auto-reload functionality
-  // startAutoReload();
+  startAutoReload();
 });
 
 // Auto-reload functionality
@@ -1575,7 +1577,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // Start auto-reload on initial load
-// startAutoReload();
+startAutoReload();
 
 // Function to handle optional version update
 async function handleOptionalVersionUpdate() {
