@@ -1524,7 +1524,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await populateDeviceTable();
   
   // Start auto-reload functionality
-  startAutoReload();
+  // startAutoReload();
 });
 
 // Auto-reload functionality
@@ -1581,7 +1581,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // Start auto-reload on initial load
-startAutoReload();
+// startAutoReload();
 
 // Function to handle optional version update
 async function handleOptionalVersionUpdate() {
