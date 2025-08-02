@@ -232,9 +232,12 @@ async function applyFilters() {
     // Check if the device needs update
     const needsUpdate = device.version !== (device.latest_version || (device.version));
     if (needsUpdate) row.classList.add("needs-update");
-    const connectionStatus = device.is_connected 
-      ? '<span class="connection-status connection-online"><span class="connection-dot"></span>Online</span>'
-      : '<span class="connection-status connection-offline"><span class="connection-dot"></span>Offline</span>';
+    const connectionStatus = `
+      <span class="connection-status connection-${device.is_connected || 'unknown'}">
+        <span class="connection-dot"></span>
+        ${device.is_connected || 'unknown'}
+      </span>`;
+
     const warningStatus = device.warning === "None" || !device.warning
       ? '<span class="warning-indicator warning-none">None</span>'
       : `<span class="warning-indicator warning-${device.warning.toLowerCase()}">${device.warning}</span>`;
