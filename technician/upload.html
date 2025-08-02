@@ -317,14 +317,10 @@
 
       <form id="uploadForm" enctype="multipart/form-data">
         <div class="form-field">
-          <label for="deviceInput">Target Device</label>
-          <input
-            type="text"
-            id="deviceInput"
-            name="device_name"
-            placeholder="Enter device name (e.g. ABC123)"
-            required
-          />
+          <label for="deviceSelector">Target Device</label>
+          <select id="deviceSelector" name="device_name" required>
+            <option value="">Select Target Device</option>
+          </select>
         </div>
 
         <div class="form-field">
