@@ -1,4 +1,4 @@
-import { getDeviceList, getVersionsList, updateDevice, deleteDevice, getInfo, updateDeviceVersion } from '../callAPI.js';
+import { getDeviceList, getVersionsList, updateDevice, deleteDevice, getInfo, updateDeviceVersion, updateDeviceInfo  } from '../callAPI.js';
 
 // Function to populate the device table
 async function populateDeviceTable() {
