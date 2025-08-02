@@ -1,494 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Upload Firmware OTA</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upload Firmware OTA</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      line-height: 1.6;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    #uploadContainer {
-      max-width: 500px;
-      width: 100%;
-      padding: 40px;
-      background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 10px;
-      font-size: 1.8em;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-    }
-
-    h2:first-of-type {
-      background: linear-gradient(135deg, #667eea, #2196f3);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 5px;
-    }
-
-    h2:last-of-type {
-      font-size: 1.2em;
-      color: #7f8c8d;
-      margin-bottom: 30px;
-      font-weight: 400;
-    }
-
-    input[type="file"],
-    input[type="text"],
-    select {
-      width: 100%;
-      padding: 15px 20px;
-      margin: 10px 0;
-      border: 2px solid #e1e8ed;
-      border-radius: 12px;
-      font-size: 16px;
-      background: #fff;
-      transition: all 0.3s ease;
-      outline: none;
-    }
-
-    input[type="file"]:focus,
-    input[type="text"]:focus,
-    select:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      transform: translateY(-2px);
-    }
-
-    input[type="text"]::placeholder {
-      color: #a0a9b8;
-      font-style: italic;
-    }
-
-    input[type="file"] {
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-      background-position: right 15px center;
-      background-repeat: no-repeat;
-      background-size: 16px;
-      padding-right: 45px;
-      border: 2px solid #e1e8ed;
-    }
-
-    select:hover {
-      border-color: #bdc3c7;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    select option {
-      padding: 10px;
-      font-size: 14px;
-    }
-
-    select option:hover {
-      background-color: #f8f9fa;
-    }
-
-    /* Form field grouping */
-    .form-field {
-      margin-bottom: 20px;
-    }
-
-    .form-field label {
-      display: block;
-      margin-bottom: 8px;
-      color: #2c3e50;
-      font-weight: 600;
-      font-size: 14px;
-      text-align: left;
-    }
-
-    /* Required field styling */
-    input[required], select[required] {
-      border-left: 4px solid #e74c3c;
-    }
-
-    input[required]:valid, select[required]:valid {
-      border-left: 4px solid #27ae60;
-    }
-
-    input[required]:focus, select[required]:focus {
-      border-left: 4px solid #3498db;
-    }
-
-    /* Required asterisk styling */
-    label::after {
-      content: " *";
-      color: #e74c3c;
-      font-weight: bold;
-    }
-
-    /* Validation styling */
-    input:invalid, select:invalid {
-      border-color: #e74c3c !important;
-      box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
-    }
-
-    input:valid, select:valid {
-      border-color: #27ae60 !important;
-    }
-
-    /* Custom validation messages */
-    .validation-message {
-      color: #e74c3c;
-      font-size: 12px;
-      margin-top: 5px;
-      display: none;
-    }
-
-    .validation-message.show {
-      display: block;
-    }
-
-    input[type="file"]::-webkit-file-upload-button {
-      background: linear-gradient(135deg, #667eea, #2196f3);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-right: 15px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    input[type="file"]::-webkit-file-upload-button:hover {
-      background: linear-gradient(135deg, #5a6fd8, #2196f3);
-      transform: translateY(-1px);
-    }
-
-    #uploadBtn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #28a745, darkgreen);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #uploadBtn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    #uploadBtn:hover {
-      background: linear-gradient(135deg, teal, seagreen);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-    }
-
-    #uploadBtn:hover::before {
-      left: 100%;
-    }
-
-    #uploadBtn:active {
-      transform: translateY(0);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-    }
-
-    /* Loading animation */
-    .loading {
-      pointer-events: none;
-      opacity: 0.7;
-    }
-
-    .loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      margin: -10px 0 0 -10px;
-      border: 2px solid transparent;
-      border-top: 2px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Responsive design */
-    @media (max-width: 600px) {
       body {
-        padding: 15px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        line-height: 1.6;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       }
-      
+
       #uploadContainer {
-        padding: 30px 25px;
-        margin: 10px;
+        max-width: 500px;
+        width: 100%;
+        padding: 40px;
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       }
-      
+
+      h2 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 1.8em;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+
       h2:first-of-type {
-        font-size: 1.6em;
+        background: linear-gradient(135deg, #667eea, #2196f3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
       }
-      
+
+      h2:last-of-type {
+        font-size: 1.2em;
+        color: #7f8c8d;
+        margin-bottom: 30px;
+        font-weight: 400;
+      }
+
       input[type="file"],
       input[type="text"],
       select {
-        padding: 12px 15px;
+        width: 100%;
+        padding: 15px 20px;
+        margin: 10px 0;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        font-size: 16px;
+        background: #fff;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      input[type="file"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+      }
+
+      input[type="text"]::placeholder {
+        color: #a0a9b8;
+        font-style: italic;
+      }
+
+      input[type="file"] {
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 15px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        padding-right: 45px;
+        border: 2px solid #e1e8ed;
+      }
+
+      select:hover {
+        border-color: #bdc3c7;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      select option {
+        padding: 10px;
         font-size: 14px;
       }
-      
-      select {
-        padding-right: 35px;
-        background-size: 14px;
+
+      select option:hover {
+        background-color: #f8f9fa;
       }
-      
-      #uploadBtn {
-        padding: 14px;
-        font-size: 16px;
+
+      /* Form field grouping */
+      .form-field {
+        margin-bottom: 20px;
       }
-    }
 
-    /* Enhanced focus styles for accessibility */
-    input:focus,
-    button:focus {
-      outline: 2px solid #667eea;
-      outline-offset: 2px;
-    }
-  </style>
-</head>
-<body id="root">
-  <div id="uploadContainer">
-    <h2>Upload Firmware OTA</h2>
-    <h2>ESP32 System</h2>
+      .form-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: left;
+      }
 
-    <form id="uploadForm" enctype="multipart/form-data">
-       <div class="form-field">
-        <label for="deviceSelector">Target Device</label>
-        <select id="deviceSelector" name="device_name" required>
-          <option value="">Select Target Device</option>
-        </select>
-      </div>
-      
-      <div class="form-field">
-        <label for="version">Version</label>
-        <input type="text" id="version" name="version" placeholder="Enter version (e.g. 1.0.2)" required />
-      </div>
+      /* Required field styling */
+      input[required],
+      select[required] {
+        border-left: 4px solid #e74c3c;
+      }
 
-      <div class="form-field">
-        <label for="changelog">Changelog</label>
-        <input type="text" name="changelog" id="changelog" placeholder="Enter changelog (e.g. Thêm tính năng đo nhiệt độ)" required/>
-      </div>
+      input[required]:valid,
+      select[required]:valid {
+        border-left: 4px solid #27ae60;
+      }
 
-      <div class="form-field">
-        <label for="firmwareFile">Firmware File</label>
-        <input type="file" name="file" id="firmwareFile" accept=".bin" required />
-      </div>
-    </form>
-      
-    <button id="uploadBtn">Upload</button>
+      input[required]:focus,
+      select[required]:focus {
+        border-left: 4px solid #3498db;
+      }
 
-    <div style="margin-top: 30px; text-align: center;">
-      <a href="technician.html" style="
-        display: inline-block;
-        padding: 10px 20px;
-        background: #3498db;
+      /* Required asterisk styling */
+      label::after {
+        content: " *";
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      /* Validation styling */
+      input:invalid,
+      select:invalid {
+        border-color: #e74c3c !important;
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+      }
+
+      input:valid,
+      select:valid {
+        border-color: #27ae60 !important;
+      }
+
+      /* Custom validation messages */
+      .validation-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .validation-message.show {
+        display: block;
+      }
+
+      input[type="file"]::-webkit-file-upload-button {
+        background: linear-gradient(135deg, #667eea, #2196f3);
         color: white;
-        text-decoration: none;
+        border: none;
+        padding: 10px 20px;
         border-radius: 8px;
+        cursor: pointer;
+        margin-right: 15px;
         font-weight: 500;
-        transition: background 0.3s ease;
-      " onmouseover="this.style.background='#2980b9'" onmouseout="this.style.background='#3498db'">
-        ← Back to Dashboard
-      </a>
+        transition: all 0.3s ease;
+      }
+
+      input[type="file"]::-webkit-file-upload-button:hover {
+        background: linear-gradient(135deg, #5a6fd8, #2196f3);
+        transform: translateY(-1px);
+      }
+
+      #uploadBtn {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #28a745, darkgreen);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #uploadBtn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      #uploadBtn:hover {
+        background: linear-gradient(135deg, teal, seagreen);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      #uploadBtn:hover::before {
+        left: 100%;
+      }
+
+      #uploadBtn:active {
+        transform: translateY(0);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Loading animation */
+      .loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .loading::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid transparent;
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive design */
+      @media (max-width: 600px) {
+        body {
+          padding: 15px;
+        }
+
+        #uploadContainer {
+          padding: 30px 25px;
+          margin: 10px;
+        }
+
+        h2:first-of-type {
+          font-size: 1.6em;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        select {
+          padding: 12px 15px;
+          font-size: 14px;
+        }
+
+        select {
+          padding-right: 35px;
+          background-size: 14px;
+        }
+
+        #uploadBtn {
+          padding: 14px;
+          font-size: 16px;
+        }
+      }
+
+      /* Enhanced focus styles for accessibility */
+      input:focus,
+      button:focus {
+        outline: 2px solid #667eea;
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body id="root">
+    <div id="uploadContainer">
+      <h2>Upload Firmware OTA</h2>
+      <h2>ESP32 System</h2>
+
+      <form id="uploadForm" enctype="multipart/form-data">
+        <div class="form-field">
+          <label for="deviceInput">Target Device</label>
+          <input
+            type="text"
+            id="deviceInput"
+            name="device_name"
+            placeholder="Enter device name (e.g. ABC123)"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="version">Version</label>
+          <input
+            type="text"
+            id="version"
+            name="version"
+            placeholder="Enter version (e.g. 1.0.2)"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="changelog">Changelog</label>
+          <input
+            type="text"
+            name="changelog"
+            id="changelog"
+            placeholder="Enter changelog (e.g. Thêm tính năng đo nhiệt độ)"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="firmwareFile">Firmware File</label>
+          <input
+            type="file"
+            name="file"
+            id="firmwareFile"
+            accept=".bin"
+            required
+          />
+        </div>
+      </form>
+
+      <button id="uploadBtn">Upload</button>
+
+      <div style="margin-top: 30px; text-align: center">
+        <a
+          href="technician.html"
+          style="
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s ease;
+          "
+          onmouseover="this.style.background='#2980b9'"
+          onmouseout="this.style.background='#3498db'"
+        >
+          ← Back to Dashboard
+        </a>
+      </div>
     </div>
-  </div>
-  <script type="module">
-    import { getVersionsList, checkAuthentication, uploadFirmware } from "../callAPI.js";
+    <script type="module">
+      import {
+        getVersionsList,
+        checkAuthentication,
+        uploadFirmware,
+      } from "../callAPI.js";
 
-    if (!checkAuthentication()) {
-      alert("❌ Authentication failed. Please log in again.");
-      window.location.href = "../login/login.html";
-    }
+      if (!checkAuthentication()) {
+        alert("❌ Authentication failed. Please log in again.");
+        window.location.href = "../login/login.html";
+      }
 
-    document.getElementById('uploadBtn').addEventListener('click', handleUploadFirmware);
+      document
+        .getElementById("uploadBtn")
+        .addEventListener("click", handleUploadFirmware);
 
-    // Load available devices when page loads
-    window.addEventListener('load', loadAvailableDevices);
+      // Load available devices when page loads
+      window.addEventListener("load", loadAvailableDevices);
 
-    async function loadAvailableDevices() {
-      try {
-        console.log("Loading available devices...");
-        const firmwareData = await getVersionsList();
-        console.log("Firmware data received:", firmwareData);
-        
-        // Extract unique target devices from firmware data using Object.keys()
-        const uniqueDeviceNames = new Set();
-        Object.keys(firmwareData).forEach(deviceName => {
-          if (Array.isArray(firmwareData[deviceName])) {
-            uniqueDeviceNames.add(deviceName);
-          }
+      async function loadAvailableDevices() {
+        try {
+          console.log("Loading available devices...");
+          const firmwareData = await getVersionsList();
+          console.log("Firmware data received:", firmwareData);
+
+          // Extract unique target devices from firmware data using Object.keys()
+          const uniqueDeviceNames = new Set();
+          Object.keys(firmwareData).forEach((deviceName) => {
+            if (Array.isArray(firmwareData[deviceName])) {
+              uniqueDeviceNames.add(deviceName);
+            }
+          });
+
+          console.log("Unique devices found:", Array.from(uniqueDeviceNames));
+
+          const deviceSelector = document.getElementById("deviceSelector");
+
+          // Add individual devices to the selector
+          uniqueDeviceNames.forEach((deviceName) => {
+            const option = document.createElement("option");
+            option.value = deviceName;
+            option.textContent = deviceName;
+            deviceSelector.appendChild(option);
+          });
+
+          console.log(`Added ${uniqueDeviceNames.size} devices to selector`);
+        } catch (error) {
+          console.error("Error loading devices:", error);
+        }
+      }
+
+      async function handleUploadFirmware(event) {
+        event.preventDefault();
+        console.log("Upload firmware triggered");
+
+        const form = document.getElementById("uploadForm");
+        const fileInput = document.getElementById("firmwareFile");
+        const versionInput = document.getElementById("version");
+        const deviceSelector = document.getElementById("deviceSelector");
+        const changelogInput = document.getElementById("changelog");
+
+        console.log("Form elements:", {
+          file: fileInput.files[0],
+          version: versionInput.value,
+          device: deviceSelector.value,
+          changelog: changelogInput.value,
         });
 
-        console.log("Unique devices found:", Array.from(uniqueDeviceNames));
+        // Validate all required fields
+        if (!form.checkValidity()) {
+          alert("⚠️ Please fill in all required fields correctly.");
+          return;
+        }
 
-        const deviceSelector = document.getElementById('deviceSelector');
+        // Additional validation for version format
+        const versionValue = versionInput.value.trim();
+        if (!/^\d+\.\d+\.\d+$/.test(versionValue)) {
+          alert("⚠️ Please enter version in format: 1.0.2");
+          return;
+        }
 
-        // Add individual devices to the selector
-        uniqueDeviceNames.forEach(deviceName => {
-          const option = document.createElement('option');
-          option.value = deviceName;
-          option.textContent = deviceName;
-          deviceSelector.appendChild(option);
-        });
+        // Check if device is selected
+        if (!deviceSelector.value) {
+          alert("⚠️ Please select a target device");
+          return;
+        }
 
-        console.log(`Added ${uniqueDeviceNames.size} devices to selector`);
-      } catch (error) {
-        console.error("Error loading devices:", error);
-      }
-    }    
-    
-    async function handleUploadFirmware(event) {
-      event.preventDefault();
-      console.log("Upload firmware triggered");
-      
-      const form = document.getElementById('uploadForm');
-      const fileInput = document.getElementById('firmwareFile');
-      const versionInput = document.getElementById('version');
-      const deviceSelector = document.getElementById('deviceSelector');
-      const changelogInput = document.getElementById('changelog');
+        // Check if file is selected
+        if (!fileInput.files[0]) {
+          alert("⚠️ Please select a firmware file");
+          return;
+        }
 
-      console.log("Form elements:", {
-        file: fileInput.files[0],
-        version: versionInput.value,
-        device: deviceSelector.value,
-        changelog: changelogInput.value
-      });
+        // Show loading state
+        const uploadBtn = document.getElementById("uploadBtn");
+        uploadBtn.classList.add("loading");
+        uploadBtn.textContent = "Uploading...";
 
-      // Validate all required fields
-      if (!form.checkValidity()) {
-        alert("⚠️ Please fill in all required fields correctly.");
-        return;
-      }
+        try {
+          // Create FormData with all required fields
+          const formData = new FormData(form);
 
-      // Additional validation for version format  
-      const versionValue = versionInput.value.trim();
-      if (!/^\d+\.\d+\.\d+$/.test(versionValue)) {
-        alert("⚠️ Please enter version in format: 1.0.2");
-        return;
-      }
-
-      // Check if device is selected
-      if (!deviceSelector.value) {
-        alert("⚠️ Please select a target device");
-        return;
-      }
-
-      // Check if file is selected
-      if (!fileInput.files[0]) {
-        alert("⚠️ Please select a firmware file");
-        return;
-      }
-
-      // Show loading state
-      const uploadBtn = document.getElementById('uploadBtn');
-      uploadBtn.classList.add('loading');
-      uploadBtn.textContent = 'Uploading...';
-
-      try {
-        // Create FormData with all required fields
-        const formData = new FormData(form);
-        
-        // Verify FormData contents
-        console.log("FormData contents:");
-        for (let [key, value] of formData.entries()) {
-          console.log(`${key}:`, value);
-          if (value instanceof File) {
-            console.log(`  File details - name: ${value.name}, size: ${value.size}, type: ${value.type}`);
+          // Verify FormData contents
+          console.log("FormData contents:");
+          for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+            if (value instanceof File) {
+              console.log(
+                `  File details - name: ${value.name}, size: ${value.size}, type: ${value.type}`
+              );
+            }
           }
-        }
 
-        // Validate FormData before sending
-        if (!formData.get('device_name')) {
-          throw new Error('Device name is missing from FormData');
-        }
-        if (!formData.get('version')) {
-          throw new Error('Version is missing from FormData');
-        }
-        if (!formData.get('changelog')) {
-          throw new Error('Changelog is missing from FormData');
-        }
-        if (!formData.get('file') || !(formData.get('file') instanceof File)) {
-          throw new Error('Valid file is missing from FormData');
-        }
+          // Validate FormData before sending
+          if (!formData.get("device_name")) {
+            throw new Error("Device name is missing from FormData");
+          }
+          if (!formData.get("version")) {
+            throw new Error("Version is missing from FormData");
+          }
+          if (!formData.get("changelog")) {
+            throw new Error("Changelog is missing from FormData");
+          }
+          if (
+            !formData.get("file") ||
+            !(formData.get("file") instanceof File)
+          ) {
+            throw new Error("Valid file is missing from FormData");
+          }
 
-        // Use the uploadFirmware API from callAPI.js
-        console.log("Calling uploadFirmware API...");
-        const response = await uploadFirmware(formData);  
-        
-        if (response) {
-          const deviceText = deviceSelector.value;
-          alert(`✅ Upload successful for ${deviceText}`);
+          // Use the uploadFirmware API from callAPI.js
+          console.log("Calling uploadFirmware API...");
+          const response = await uploadFirmware(formData);
 
-          // Reset form and button
+          if (response) {
+            const deviceText = deviceSelector.value;
+            alert(`✅ Upload successful for ${deviceText}`);
+
+            // Reset form and button
+            resetUploadButton();
+            form.reset();
+          } else {
+            alert(
+              "❌ Upload failed: " +
+                (response?.message || response?.error || "Unknown error")
+            );
+            resetUploadButton();
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          alert("❌ Upload failed: " + error.message);
           resetUploadButton();
-          form.reset();
-        } else {
-          alert("❌ Upload failed: " + (response?.message || response?.error || "Unknown error"));
-          resetUploadButton();
         }
-        
-      } catch (error) {
-        console.error("Upload error:", error);
-        alert("❌ Upload failed: " + error.message);
-        resetUploadButton();
       }
-    }
 
-    function resetUploadButton() {
-      const uploadBtn = document.getElementById('uploadBtn');
-      uploadBtn.classList.remove('loading');
-      uploadBtn.textContent = 'Upload';
-    }
-  </script>
-</body>
+      function resetUploadButton() {
+        const uploadBtn = document.getElementById("uploadBtn");
+        uploadBtn.classList.remove("loading");
+        uploadBtn.textContent = "Upload";
+      }
+    </script>
+  </body>
 </html>
