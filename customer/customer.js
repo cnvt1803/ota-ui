@@ -245,6 +245,7 @@ async function applyFilters() {
       ? '<span class="warning-indicator warning-none">None</span>'
       : `<span class="warning-indicator warning-${device.warning.toLowerCase()}">${device.warning}</span>`;
     let statusBadge;
+    statusBadge = device.status
     row.innerHTML = `
       <td><input type="checkbox" class="device-checkbox" data-device-id="${device.device_id}"></td>
       <td data-label="ID">${device.device_id}</td>
