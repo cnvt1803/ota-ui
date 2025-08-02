@@ -892,7 +892,7 @@ async function submitEditDeviceForm(event) {
     const loadingToast = createToast('Updating device...', 'info', 10000);
 
     // Call update API
-    const updateData = await updateDeviceInfo({
+    const updateData = await updateDeviceInfor({
       device_id: deviceId,
       name: deviceName,
       location: deviceLocation,
