@@ -47,7 +47,7 @@ async function populateDeviceTable() {
     } else if (device.status === "waiting") {
       statusBadge = '<span class="status-badge status-update-available">Waiting</span>';
     } else {
-      statusBadge = '<span class="status-badge status-update-available">${statusBadge}</span>';
+      statusBadge = device.status;
     }
 
     // Create 10 columns for the row (matching the CSS structure)
