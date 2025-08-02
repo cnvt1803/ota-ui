@@ -23,7 +23,7 @@ async function populateDeviceTable() {
     })();
 
     // Connection status with proper CSS classes
-    const status = (device?.is_connected || 'unknown').toLowerCase();
+    const status = (device?.is_connect || 'unknown').toLowerCase();
 
     const connectionStatus = `
       <span class="connection-status connection-${status}">
