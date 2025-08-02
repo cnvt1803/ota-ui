@@ -245,19 +245,6 @@ async function applyFilters() {
       ? '<span class="warning-indicator warning-none">None</span>'
       : `<span class="warning-indicator warning-${device.warning.toLowerCase()}">${device.warning}</span>`;
     let statusBadge;
-    if (needsUpdate) {
-      statusBadge = '<span class="status-badge status-update-available">Update Available</span>';
-    } else if (!device.is_connected) {
-      statusBadge = '<span class="status-badge status-outdated">Offline</span>';
-    } else if (device.warning && device.warning !== "None") {
-      statusBadge = '<span class="status-badge status-update-available">Warning</span>';
-    } else if (device.status === "done") {
-      statusBadge = '<span class="status-badge status-up-to-date">Done</span>';
-    } else if (device.status === "failed") {
-      statusBadge = '<span class="status-badge status-outdated">Failed</span>';
-    } else {
-      statusBadge;
-    }
     row.innerHTML = `
       <td><input type="checkbox" class="device-checkbox" data-device-id="${device.device_id}"></td>
       <td data-label="ID">${device.device_id}</td>
