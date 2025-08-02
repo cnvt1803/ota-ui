@@ -18,9 +18,11 @@ async function populateDeviceTable() {
     const row = document.createElement("tr");
 
     const latestVersion = (() => {
-      const versionInfo = allLastestVersionForEachDevice[device.name][0];
-      return versionInfo ? versionInfo.version : device.version;
+      const versionList = allLastestVersionForEachDevice?.[device.name];
+      const versionInfo = Array.isArray(versionList) ? versionList[0] : null;
+      return versionInfo?.version || device.version;
     })();
+
 
     // Connection status with proper CSS classes
     const status = (device?.is_connect || 'unknown').toLowerCase();
