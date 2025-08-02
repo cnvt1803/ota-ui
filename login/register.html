@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký & Gửi lại Email với Loading</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 100%;
+      max-width: 450px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .form-section {
+      padding: 40px 30px;
+    }
+
+    .confirm-section {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      display: none;
+      animation: fadeInDown 0.5s ease-out;
+    }
+
+    .confirm-section.show {
+      display: block;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .timer-display {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .timer-display.active {
+      color: #856404;
+    }
+
+    .section-title {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: #667eea;
+      font-size: 22px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 15px 20px 15px 50px;
+      border: 2px solid #e1e5e9;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 500;
+      text-align: center;
+      min-height: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status.loading {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .divider {
+      margin: 30px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #e1e5e9;
+    }
+
+    .divider span {
+      background: white;
+      padding: 0 20px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .icon-animate {
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 10px;
+        border-radius: 15px;
+      }
+      
+      .form-section {
+        padding: 30px 20px;
+      }
+      
+      .header {
+        padding: 25px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-user-plus"></i> Tạo Tài Khoản</h1>
+      <p>Tham gia cộng đồng của chúng tôi</p>
+    </div>
+
+    <div class="register-section">
+      <div class="form-section">
+        <div class="section-title">
+          <i class="fas fa-user-plus"></i>
+          <span>Đăng ký tài khoản</span>
+        </div>
+        
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="email" placeholder="Nhập địa chỉ email của bạn">
+        </div>
+        
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" placeholder="Nhập mật khẩu">
+        </div>
+        
+        <button onclick="signUp()" id="signup-btn" class="btn btn-primary">
+          <i class="fas fa-user-plus"></i> Đăng ký ngay
+        </button>
+        <div id="signup-status" class="status"></div>
+      </div>
+    </div>
+
+    <div class="confirm-section" id="confirm-section">
+      <div class="section-title">
+        <i class="fas fa-clock"></i>
+        <span>Xác nhận email</span>
+      </div>
+      
+      <div class="timer-display" id="timer-display">
+        Kiểm tra email và xác nhận tài khoản của bạn
+      </div>
+
+      <button onclick="resendConfirm()" id="resend-btn" class="btn btn-secondary" disabled>
+        <i class="fas fa-paper-plane"></i> Gửi lại sau <span id="countdown">2:00</span>
+      </button>
+      <div id="resend-status" class="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+        'https://zkzyawzjmllvqzmedsxd.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inprenlhd3pqbWxsdnF6bWVkc3hkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTQyOTAzNSwiZXhwIjoyMDY3MDA1MDM1fQ.IG8eGax0lUxkUOW8TpJ6M0QvSafB-gM2NWsg6wIOlTU'
+    );
+
+    let countdownTimer = null;
+    let timeLeft = 120; // 2 minutes in seconds
+
+    function startCountdown() {
+      const btn = document.getElementById('resend-btn');
+      const countdown = document.getElementById('countdown');
+      const timerDisplay = document.getElementById('timer-display');
+      
+      btn.disabled = true;
+      timerDisplay.className = 'timer-display active';
+      timerDisplay.innerHTML = '<i class="fas fa-clock"></i> Vui lòng đợi trước khi gửi lại email';
+      
+      countdownTimer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        countdown.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(countdownTimer);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi lại xác nhận';
+          timerDisplay.className = 'timer-display';
+          timerDisplay.innerHTML = '<i class="fas fa-check"></i> Bạn có thể gửi lại email xác nhận';
+          timeLeft = 120; // Reset for next time
+        } else {
+          timeLeft--;
+        }
+      }, 1000);
+    }
+
+    function showConfirmSection() {
+      const confirmSection = document.getElementById('confirm-section');
+      confirmSection.classList.add('show');
+      startCountdown();
+    }
+
+    async function signUp() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const status = document.getElementById('signup-status');
+      const btn = document.getElementById('signup-btn');
+
+      if (!email || !password) {
+        status.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Vui lòng điền đầy đủ thông tin';
+        status.className = 'status error';
+        return;
+      }
+
+      status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng ký...';
+      status.className = 'status loading';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        status.innerHTML = '<i class="fas fa-times-circle"></i> Lỗi: ' + error.message;
+        status.className = 'status error';
+      } else {
+        status.innerHTML = '<i class="fas fa-check-circle"></i> Đăng ký thành công! Kiểm tra email để xác nhận.';
+        status.className = 'status success';
+        
+        // Show confirm section and start timer
+        showConfirmSection();
+        
+        // Clear form
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+      }
+      
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Đăng ký ngay';
+    }
+
+    async function resendConfirm() {
+      const status = document.getElementById('resend-status');
+      const btn = document.getElementById('resend-btn');
+      
+      // Get email from the registration form or ask user to re-enter
+      let email = document.getElementById('email').value;
+      if (!email) {
+        // Create a prompt for email if not available
+        email = prompt('Vui lòng nhập email để gửi lại xác nhận:');
+        if (!email) {
+          status.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Vui lòng nhập email';
+          status.className = 'status error';
+          return;
+        }
+      }
+
+      status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi lại email...';
+      status.className = 'status loading';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+      const { data, error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email
+      });
+
+      if (error) {
+        status.innerHTML = '<i class="fas fa-times-circle"></i> Lỗi: ' + error.message;
+        status.className = 'status error';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi lại xác nhận';
+      } else {
+        status.innerHTML = '<i class="fas fa-check-circle"></i> Đã gửi lại email xác nhận!';
+        status.className = 'status success';
+        
+        // Restart the countdown timer
+        timeLeft = 120;
+        startCountdown();
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="customer.css">
+  <title>Firmware Versions</title>
+</head>
+<body>
+  <div id="root">
+    <h1>DEVICES MANAGEMENT</h1>
+
+    <div class="action-buttons-container">
+      <div class="left-buttons">
+        <!-- Delete button removed -->
+      </div>
+      <div class="right-buttons">
+        <button id="logoutButton" class="action-btn logout-btn">
+          <span class="btn-icon">🚪</span>
+          <span class="btn-text">Logout</span>
+        </button>
+        <button id="refreshButton" class="action-btn refresh-btn">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Refresh</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Account Information Section -->
+    <div class="account-info-section">
+      <div class="account-info-header">
+        <div class="header-content">
+          <div class="header-icon">👤</div>
+          <div class="header-text">
+            <h3>Account Information</h3>
+            <p class="header-subtitle">Your profile details and account settings</p>
+          </div>
+        </div>
+        <button id="toggleAccountInfo" class="toggle-btn">
+          <span class="toggle-icon">▼</span>
+        </button>
+      </div>
+      <div id="accountInfoContent" class="account-info-content">
+        <div class="account-details">
+          <div class="account-item">
+            <div class="item-icon">🆔</div>
+            <div class="item-content">
+              <span class="account-label">User ID</span>
+              <span id="userId" class="account-value">Loading...</span>
+            </div>
+          </div>
+          <div class="account-item">
+            <div class="item-icon">👨‍💼</div>
+            <div class="item-content">
+              <span class="account-label">Full Name</span>
+              <span id="userFullName" class="account-value">Loading...</span>
+            </div>
+          </div>
+          <div class="account-item">
+            <div class="item-icon">🎯</div>
+            <div class="item-content">
+              <span class="account-label">Account Type</span>
+              <span id="userRole" class="account-value role-badge">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <h3>Filter Devices</h3>
+      <div class="filter-row">
+        <div class="filter-group location-filter-group">
+          <label for="locationFilter">Location</label>
+          <input id="locationFilter" type="text" placeholder="Search by location..." />
+        </div>
+      </div>
+      <div class="filter-row sub-filters-row">
+        <div class="filter-group">
+          <label for="isConnectedFilter">Is Connected</label>
+          <select id="isConnectedFilter">
+            <option value="">All</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="">All</option>
+            <option value="done">Done</option>
+            <option value="failed">Failed</option>
+            <option value="waiting">Waiting</option>
+          </select>
+        </div>
+        <div class="filter-group filter-btn-group">
+          <button id="applyFilterButton" class="filter-btn">Apply</button>
+          <button id="clearFilterButton" class="filter-btn clear-btn">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">
+            <input type="checkbox" id="selectAll" title="Select All">
+          </th>
+          <th colspan="3">Device information</th>
+          <th colspan="2">Version information</th>
+          <th colspan="2">Device status</th>
+          <th rowspan="2">Status</th>
+          <th rowspan="2">Actions</th>
+        </tr>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Current Version</th>
+          <th>Latest Version</th>
+          <th>Is Connected</th>
+          <th>Warning</th>
+        </tr>
+      </thead>
+      <tbody id="firmwareTableBody">
+        <!-- Table rows will be populated by JavaScript -->
+        <tr>
+          <td colspan="10" style="text-align: center; color: #7f8c8d; font-style: italic;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <div style="width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              Loading devices...
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Bulk Update Section -->
+    <div class="bulk-update-section">
+      <div class="selected-info">
+        <span id="selectedCount">0 devices selected</span>
+      </div>
+      <div class="bulk-actions">
+        <button id="bulkUpdateButton" class="bulk-update-btn" disabled>
+          <span class="update-icon">🔄</span>
+          Update Latest Version
+        </button>
+        <button id="bulkUpdateOptionalButton" class="bulk-update-optional-btn" disabled>
+          <span class="update-icon">⚙️</span>
+          Update with Selected Version
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Device Modal -->
+  <div id="editDeviceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Device</h2>
+        <span class="close">&times;</span>
+      </div>
+      <form id="editDeviceForm" class="modal-body">
+        <input type="hidden" id="editDeviceId" name="editDeviceId">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editDeviceName">Device Name *</label>
+            <input type="text" id="editDeviceName" name="editDeviceName" required>
+          </div>
+          <div class="form-group">
+            <label for="editDeviceLocation">Location *</label>
+            <select id="editDeviceLocation" name="editDeviceLocation" required>
+              <option value="">Select Location</option>
+              <option value="Ho Chi Minh City">Ho Chi Minh City</option>
+              <option value="Hanoi">Hanoi</option>
+              <option value="Da Nang">Da Nang</option>
+              <option value="New York">New York</option>
+              <option value="Los Angeles">Los Angeles</option>
+              <option value="Tokyo">Tokyo</option>
+              <option value="Osaka">Osaka</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row form-row-single">
+          <div class="form-group">
+            <label for="editDeviceVersion">Current Version *</label>
+            <select id="editDeviceVersion" name="editDeviceVersion" required>
+              <option value="">Select Version</option>
+              <option value="1.0">1.0</option>
+              <option value="1.1">1.1</option>
+              <option value="1.2">1.2</option>
+              <option value="2.0">2.0</option>
+              <option value="2.1">2.1</option>
+              <option value="2.2">2.2</option>
+              <option value="3.0">3.0</option>
+              <option value="3.1">3.1</option>
+              <option value="4.0">4.0</option>
+              <option value="4.1">4.1</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancelEditDevice" class="cancel-btn">Cancel</button>
+          <button type="submit" id="submitEditDevice" class="submit-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Optional Version Update Modal -->
+  <div id="optionalVersionModal" class="modal">
+    <div class="modal-content optional-version-modal">
+      <div class="modal-header">
+        <h2>Update with Selected Versions</h2>
+        <span class="close" id="closeOptionalModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div id="optionalVersionSections" class="optional-version-sections">
+          <!-- Device sections will be dynamically generated here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancelOptionalUpdates" class="cancel-btn">Cancel</button>
+          <button type="button" id="applyOptionalUpdates" class="submit-btn" >Update Selected Versions</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Choose Version Modal for Single Device Update -->
+  <div id="chooseVersionModal" class="modal">
+    <div class="modal-content choose-version-modal">
+      <div class="modal-header">
+        <h2>Choose a Version</h2>
+        <span class="close" id="closeChooseVersionModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="device-info-section">
+          <div class="device-info-item">
+            <span class="info-label">Device Name:</span>
+            <span id="chooseVersionDeviceName" class="info-value">-</span>
+          </div>
+          <div class="device-info-item">
+            <span class="info-label">Device ID:</span>
+            <span id="chooseVersionDeviceId" class="info-value">-</span>
+          </div>
+          <div class="device-info-item">
+            <span class="info-label">Current Version:</span>
+            <span id="chooseVersionCurrentVersion" class="info-value">-</span>
+          </div>
+        </div>
+        <div class="version-selection-section">
+          <label for="chooseVersionSelect">Select Target Version:</label>
+          <select id="chooseVersionSelect" class="version-select-single">
+            <option value="">Select a version...</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancelChooseVersion" class="cancel-btn">Cancel</button>
+          <button type="button" id="confirmChooseVersion" class="submit-btn">Update Device</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="customer.js"></script>
+</body>
+</html>

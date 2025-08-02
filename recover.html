@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đặt lại mật khẩu</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="90" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+      animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) translateX(0px); }
+      25% { transform: translateY(-10px) translateX(5px); }
+      50% { transform: translateY(0px) translateX(-5px); }
+      75% { transform: translateY(10px) translateX(5px); }
+      100% { transform: translateY(0px) translateX(0px); }
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 
+                  0 0 0 1px rgba(255, 255, 255, 0.1);
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 28px;
+      font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      border-radius: 2px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border: 2px solid #cbd5e1;
+      background: #f8fafc;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    input[type="password"]:focus {
+      border-color: #3b82f6;
+      background: #fff;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      transform: translateY(-2px);
+    }
+
+    input[type="password"]:hover {
+      background: #fff;
+      border-color: #64748b;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .status {
+      margin-top: 25px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      text-align: center;
+      display: none;
+      font-weight: 500;
+      animation: statusAppear 0.3s ease-out;
+    }
+
+    @keyframes statusAppear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .status.success {
+      color: #15803d;
+      background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+      border: 2px solid #86efac;
+      display: block;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+    }
+
+    .status.error {
+      color: #b91c1c;
+      background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+      border: 2px solid #fca5a5;
+      display: block;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+
+    .status.loading {
+      color: #555;
+      background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+      border: 2px solid #ccc;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status.loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔐 Đặt lại mật khẩu</h2>
+    <input type="password" id="new-password" placeholder="Mật khẩu mới" />
+    <input type="password" id="confirm-password" placeholder="Xác nhận mật khẩu" />
+    <button onclick="resetPassword()">Đặt lại mật khẩu</button>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = "https://zkzyawzjmllvqzmedsxd.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inprenlhd3pqbWxsdnF6bWVkc3hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0MjkwMzUsImV4cCI6MjA2NzAwNTAzNX0.VWxY3zho-AI5eu8m5L-QQpOJN2hCE7UWcv0VayNIJS0";
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const statusDiv = document.getElementById("status");
+
+    function showStatus(message, type = "success") {
+      statusDiv.textContent = message;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = "block";
+
+      if (type === "success") {
+        setTimeout(() => {
+          statusDiv.textContent = "";
+          statusDiv.className = "status";
+          statusDiv.style.display = "none";
+        }, 5000);
+      }
+    }
+
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const access_token = hashParams.get("access_token");
+    const error = hashParams.get("error");
+    const error_description = hashParams.get("error_description");
+
+    if (error) {
+      showStatus("❌ " + decodeURIComponent(error_description || "Có lỗi xảy ra"), "error");
+    }
+
+    async function resetPassword() {
+      const newPassword = document.getElementById("new-password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (!access_token) {
+        showStatus("❌ Không tìm thấy access_token trong URL", "error");
+        return;
+      }
+
+      if (!newPassword || !confirmPassword) {
+        showStatus("❗ Vui lòng nhập đầy đủ cả hai ô mật khẩu", "error");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showStatus("❌ Mật khẩu xác nhận không khớp", "error");
+        return;
+      }
+
+      showStatus("⏳ Đang cập nhật mật khẩu...", "loading");
+
+      try {
+        const { data, error } = await client.auth.updateUser(
+          { password: newPassword },
+          { accessToken: access_token }
+        );
+
+        if (error) {
+          console.error(error);
+          showStatus("❌ Lỗi: " + error.message, "error");
+        } else {
+          console.log(data);
+          showStatus("✅ Mật khẩu đã được cập nhật thành công!", "success");
+        }
+      } catch (err) {
+        console.error(err);
+        showStatus("❌ Lỗi không xác định: " + err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>
