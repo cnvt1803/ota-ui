@@ -244,15 +244,15 @@ async function applyFilters() {
     if (needsUpdate) {
       statusBadge = '<span class="status-badge status-update-available">Update Available</span>';
     } else if (!device.is_connected) {
-      statusBadge = '<span class="status-badge status-outdated">Offline</span>';
+      statusBadge = '<span class="status-badge status-outdated">Loading</span>';
     } else if (device.warning && device.warning !== "None") {
-      statusBadge = '<span class="status-badge status-update-available">Warning</span>';
+      statusBadge = '<span class="status-badge status-update-available">Loading</span>';
     } else if (device.status === "done") {
-      statusBadge = '<span class="status-badge status-up-to-date">Done</span>';
+      statusBadge = '<span class="status-badge status-up-to-date">Loading</span>';
     } else if (device.status === "failed") {
-      statusBadge = '<span class="status-badge status-outdated">Failed</span>';
+      statusBadge = '<span class="status-badge status-outdated">Loading</span>';
     } else {
-      statusBadge = '<span class="status-badge status-up-to-date">Up to Date</span>';
+      statusBadge = '<span class="status-badge status-up-to-date">Loading</span>';
     }
     row.innerHTML = `
       <td><input type="checkbox" class="device-checkbox" data-device-id="${device.device_id}"></td>
