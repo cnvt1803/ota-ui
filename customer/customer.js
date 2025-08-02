@@ -23,7 +23,12 @@ async function populateDeviceTable() {
     })();
 
     // Connection status with proper CSS classes
-    const connectionStatus = `<span class="connection-status connection-${device.is_connected ? 'online' : 'offline'}"><span class="connection-dot"></span>${device.is_connected ? 'online' : 'offline'}</span>`;
+    const connectionStatus = `
+      <span class="connection-status connection-${device.is_connected}">
+        <span class="connection-dot"></span>
+        ${device.is_connected}
+      </span>`;
+
 
     // Warning status with proper CSS classes
     const warningStatus = !device.warning
