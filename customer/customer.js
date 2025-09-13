@@ -904,7 +904,6 @@ async function submitEditDeviceForm(event) {
       device_id: deviceId,
       name: deviceName,
       location: deviceLocation,
-      version: deviceVersion
     });
 
     // Remove loading toast
