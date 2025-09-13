@@ -224,8 +224,8 @@ async function applyFilters() {
   filteredDevices = filteredDevices.filter(device => {
     let match = true;
     if (locationFilter && (!device.location || !device.location.toLowerCase().includes(locationFilter))) match = false;
-    if (isConnectedFilter && device.is_connect !== isConnectedFilter) match = false;
-    if (statusFilter && device.status !== statusFilter) match = false;
+    if (isConnectedFilter && device.is_connect !== isConnectedFilter.toLowerCase()) match = false;
+    if (statusFilter && device.status !== statusFilter.toLowerCase()) match = false;
     return match;
   });
 
