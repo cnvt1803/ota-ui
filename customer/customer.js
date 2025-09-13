@@ -213,8 +213,8 @@ async function handleRefreshButtonClick(event) {
 async function applyFilters() {
   // Get filter values
   const locationFilter = document.getElementById('locationFilter').value.trim().toLowerCase();
-  const isConnectedFilter = document.getElementById('isConnectedFilter').value;
-  const statusFilter = document.getElementById('statusFilter').value;
+  const isConnectedFilter = document.getElementById('isConnectedFilter').value.toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
 
   const data = await getDeviceList();
   let filteredDevices = data;
@@ -222,11 +222,10 @@ async function applyFilters() {
 
   // Apply filters
   filteredDevices = filteredDevices.filter(device => {
-    let match = true;
-    if (locationFilter && (!device.location || !device.location.toLowerCase().includes(locationFilter))) match = false;
-    if (isConnectedFilter && device.is_connect !== isConnectedFilter.toLowerCase()) match = false;
-    if (statusFilter && device.status !== statusFilter.toLowerCase()) match = false;
-    return match;
+    if (locationFilter && (!device.location || !device.location.toLowerCase().includes(locationFilter))) return false;
+    if (isConnectedFilter && device.is_connect !== isConnectedFilter) return false;
+    if (statusFilter && device.status !== statusFilter) return false;
+    return true;
   });
 
   // Re-populate table with filtered devices
@@ -238,7 +237,7 @@ async function applyFilters() {
     // Check if the device needs update
     const needsUpdate = device.version !== (device.latest_version || (device.version));
     if (needsUpdate) row.classList.add("needs-update");
-    const connectionStatus = device.is_connected 
+    const connectionStatus = device.is_connect 
       ? '<span class="connection-status connection-online"><span class="connection-dot"></span>Online</span>'
       : '<span class="connection-status connection-offline"><span class="connection-dot"></span>Offline</span>';
     const warningStatus = device.warning === "None" || !device.warning
