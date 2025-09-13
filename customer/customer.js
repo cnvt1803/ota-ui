@@ -231,7 +231,7 @@ async function applyFilters() {
   // Re-populate table with filtered devices
   const tableBody = document.querySelector("#firmwareTableBody");
   tableBody.innerHTML = "";
-  filteredDevices.forEach(device => {
+  filteredDevices.forEach(async (device) => {
     const row = document.createElement("tr");
     // ...existing code for row rendering...
     // Check if the device needs update
@@ -254,13 +254,16 @@ async function applyFilters() {
       statusBadge = device.status;
     }
 
+    const versionList = await getVersionsList();
+    const latestVersion = versionList?.[device.name]?.[0]?.version || "N/A";
+
     row.innerHTML = `
       <td><input type="checkbox" class="device-checkbox" data-device-id="${device.device_id}"></td>
       <td data-label="ID">${device.device_id}</td>
       <td data-label="Name">${device.name}</td>
       <td data-label="Location">${device.location}</td>
       <td data-label="Current Version">${device.version}</td>
-      <td data-label="Latest Version">${device.latest_version || 'N/A'}</td>
+      <td data-label="Latest Version">${latestVersion}</td>
       <td data-label="Is Connected">${connectionStatus}</td>
       <td data-label="Warning">${warningStatus}</td>
       <td data-label="Status">${statusBadge}</td>
